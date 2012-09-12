@@ -27,15 +27,21 @@ public class Simulator
 	
 	private boolean active = true;
 	//private DatabaseConnection connection;
+	private SimulatorServer server;
 	
 	public Simulator()
-	{
+	{	
 		Runtime runTime = Runtime.getRuntime();
 		this.Simulation_High_Limit = runTime.availableProcessors()*Number_Of_Threads_Per_Processor;
 		this.Simulation_Low_Limit = Simulation_High_Limit*3/4;
+		int port = 1234;
+		server = new SimulatorServer(port);
+		System.out.println("Starting server");
+		server.start();
 		
 		System.out.println("Starting simulator-thread...");
 		new Thread(new ImprovedSimulation()).start();
+		
 	}
 	
 	private class ImprovedSimulation implements Runnable
@@ -54,6 +60,7 @@ public class Simulator
 			
 			System.out.println("Turning off simulator...");
 			updateSimulatorStatus(Simulator.Simulator_Off,simulator_id);
+			server.shutdown();
 		}
 		
 	}
@@ -158,65 +165,6 @@ public class Simulator
 		
 		return requests;
 	}
-	
-	/*public boolean checkSimulatorIsRegistered(int simulator_id)
-	{
-		Connection connection = Settings.getDBC();
-		
-		try
-		{	
-			String query = "SELECT ID FROM Simulator WHERE ID=?";
-			PreparedStatement statement = connection.prepareStatement(query);
-			statement.setInt(1, simulator_id);
-			ResultSet set = statement.executeQuery();
-			
-			return set.next();
-			
-		}catch(SQLException ex)
-		{
-			ex.printStackTrace();
-		}
-		
-		return false;
-	}
-	
-	private void registerSimulator(int simulator_id)
-	{
-		Connection connection = Settings.getDBC();
-		
-		try
-		{
-			int statusId = Status.getInstance().getStatusID(Simulator.Simulator_Work_Status_Low);
-			
-			InetAddress address = InetAddress.getLocalHost();
-			String IP_adress = address.getHostAddress(); 
-			String url = IP_adress;
-			long last_seen_time = new java.util.Date().getTime();
-			
-			String query = "INSERT INTO Simulator(ID,Status_ID,IP_Adress,Last_Seen_TS,Url) VALUES(?,?,?,?,?);";
-			PreparedStatement statement = connection.prepareStatement(query);
-		
-			statement.setInt(1, simulator_id);
-			statement.setInt(2, statusId);
-			statement.setString(3, IP_adress);
-			statement.setLong(4, last_seen_time);
-			statement.setString(5,url);
-			
-			statement.executeUpdate();
-		}
-		catch(SQLException ex)
-		{
-			ex.printStackTrace();
-		}
-		catch(UnknownHostException ex)
-		{
-			ex.printStackTrace();
-		}
-		catch(StatusIdNotFoundException ex)
-		{
-			ex.printStackTrace();
-		}
-	}*/
 	
 	private void validateSimulatorStatus(int simulatorId)
 	{

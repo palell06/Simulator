@@ -8,11 +8,17 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Webserver extends Thread
+public abstract class Server extends Thread
 {
 	private int port;
+	private boolean active = true;
 	
-	public Webserver(int port)
+	public void shutdown()
+	{
+		active = false;
+	}
+	
+	public Server(int port)
 	{
 		this.port = port;
 	}
@@ -33,7 +39,7 @@ public class Webserver extends Thread
 			return;
 		}
 		
-		while(true)
+		while(active)
 		{
 			System.out.println("Waiting for requests...\n");
 			
@@ -44,7 +50,7 @@ public class Webserver extends Thread
 				
 				System.out.println("Client with the ip-adress " + client.getHostAddress() + " and hostname "+client.getHostName()+" has connected itself to the server");
 				
-				System.out.println("Reading the http-request...\n");
+				System.out.println("Reading the request...\n");
 				BufferedReader input = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 				
 				System.out.print("Preparing an output-stream to the client with the ip-adress "+client.getHostAddress());
@@ -62,16 +68,20 @@ public class Webserver extends Thread
 	
 	private void handleRequest(BufferedReader input, DataOutputStream output)
 	{
-		try {
-			JSONObject jsonObject = HTTP.toJSONObject(getRequest(input));
+		try 
+		{
+			JSONObject jsonObject = new JSONObject(getRequest(input));
 			
 			
+			parseRequest(jsonObject, output);
 			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	protected abstract void parseRequest(JSONObject jsonObject, DataOutputStream output);
 	
 	private String getRequest(BufferedReader input)
 	{
