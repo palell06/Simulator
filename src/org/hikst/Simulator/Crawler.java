@@ -67,6 +67,7 @@ public class Crawler
 				java.util.Date time_from = new Date(set.getLong(5));
 				java.util.Date time_to = new Date(set.getLong(6));
 				
+				crawlerRequests.add(new CrawlerRequest(id, type_id, longitude, latitude, time_from, time_to));
 			}
 		}
 		catch(SQLException ex)
@@ -96,10 +97,17 @@ public class Crawler
 		{
 			try
 			{
-			
-				String type = Type.getInstance().getType(request.getType());
-			
-				if(type.equals(Impact.IMPACT_WEATHER)){}
+				request.setStatusToProcessing();
+				
+				int type_id = request.getType();
+				int latitude = request.getLatitude();
+				int longitude = request.getLongitude();
+				
+				String type = Type.getInstance().getType(type_id);
+				
+				
+				
+				request.setStatusToFinished();
 				
 			}catch(TypeNotFoundException ex)
 			{

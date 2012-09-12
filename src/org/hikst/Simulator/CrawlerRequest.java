@@ -12,12 +12,12 @@ public class CrawlerRequest
 	public static String Request_Processing = "Processing";
 	public static String Request_Finished = "Finished";
 	
-	int id;
-	int type;
-	int latitude;
-	int longitude;
-	java.util.Date from;
-	java.util.Date to;
+	private int id;
+	private int type;
+	private int latitude;
+	private int longitude;
+	private java.util.Date from;
+	private java.util.Date to;
 	
 	public int getId() {
 		return id;
@@ -39,14 +39,14 @@ public class CrawlerRequest
 	}
 	
 	public CrawlerRequest(int id, int type, int latitude, int longitude,
-			Date from, Date to) {
+			java.util.Date time_from, java.util.Date time_to) {
 		super();
 		this.id = id;
 		this.type = type;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.from = from;
-		this.to = to;
+		this.from = time_from;
+		this.to = time_to;
 	}
 	
 	public CrawlerRequest(int id) throws CrawlerRequestNotFoundException

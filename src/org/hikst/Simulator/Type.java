@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 public class Type
 {
-	
 	private static Type instance;
 	
 	public static Type getInstance()
